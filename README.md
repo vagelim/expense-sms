@@ -31,13 +31,13 @@ gspread, nexmo, oauth2client
 1. [Clone the repo](https://github.com/vagelim/expense-sms.git) 
 2. `chmod +x` the python files   
 2. Modify `config.py`, change:  
-    - AUTHORIZED_NUMBERS to a list of phone numbers that are allowed to commit expenses
-    - DEFAULT_NUMBER to your phone number. This number is used for debugging purposes
-    - NEXMO_NUMBER to the phone number in your Nexmo account
-    - NEXMO_API_KEY to your Nexmo API key
-    - NEXMO_SECRET to your Nexmo secret
-    - SHEETS_URL to the URL of the Google Sheets workbook to use
-    - GCONF to the location of your gspread OAuth2 credentials (recommend putting these in a location other than webserver root, i.e. **NOT** in `/var/www`). Remember to make these readable to your webserver user
+    - `AUTHORIZED_NUMBERS` to a list of phone numbers that are allowed to commit expenses
+    - `DEFAULT_NUMBER` to your phone number. This number is used for debugging purposes
+    - `NEXMO_NUMBER` to the phone number in your Nexmo account
+    - `NEXMO_API_KEY` to your Nexmo API key
+    - `NEXMO_SECRET` to your Nexmo secret
+    - `SHEETS_URL` to the URL of the Google Sheets workbook to use
+    - `GCONF` to the location of your gspread OAuth2 credentials (recommend putting these in a location other than webserver root, i.e. **NOT** in `/var/www`). Remember to make these readable to your webserver user
 3. Share the workbook at SHEETS_URL with the email in your OAuth2 credentials, listed as `client_email`. **Note**: You may receive a "Message Undeliverable" notice in your email after sharing. Ignore it.
 
 ### Usage
