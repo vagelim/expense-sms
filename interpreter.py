@@ -1,9 +1,6 @@
 #!/usr/bin/env python
 # __author__ = 'vagelim'
 
-import subprocess
-import requests
-
 import gspread_utils as gs#Testing
 from config import DEFAULT_NUMBER
 ############
