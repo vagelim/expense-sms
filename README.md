@@ -14,7 +14,7 @@ Being obsessed with SMS as an interaction medium, I quickly saw the potential to
 Leveraging my existing experience with Nexmo and its API, the next step was learning to use gspread and the rest is history.
 
 
-### Requirements
+## Requirements
 
 #### Python Dependencies
 gspread, nexmo, oauth2client  
