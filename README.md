@@ -76,3 +76,6 @@ Right now, you can customize the character identifier, currently set to the `@` 
   Users should be able to configure their own _magic cells_ and any other settings that may be added in the future
 
 - Move all possible configuration options into `ADMIN_BOOK`
+
+#Try it out yourself!
+You can try it out yourself today! Get started by texting `add` to **12242028246**. Then, follow the prompts. Make sure the Google Sheets URL you send is shared with `account-398@gentle-corpuscle-113209.iam.gserviceaccount.com`
