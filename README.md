@@ -31,15 +31,20 @@ gspread, nexmo, oauth2client
 1. [Clone the repo](https://github.com/vagelim/expense-sms.git) 
 2. `chmod +x` the python files   
 2. Modify `config.py`, change:  
-    - `AUTHORIZED_NUMBERS` to a list of phone numbers that are allowed to commit expenses
     - `DEFAULT_NUMBER` to your phone number. This number is used for debugging purposes
     - `NEXMO_NUMBER` to the phone number in your Nexmo account
     - `NEXMO_API_KEY` to your Nexmo API key
     - `NEXMO_SECRET` to your Nexmo secret
-    - `SHEETS_URL` to the URL of the Google Sheets workbook to use
+    - `SHARE_EMAIL` to the `client_email` in your OAuth2 json file
+    - `ADMIN_BOOK` to the URL of the Google Sheets workbook to use to store administrativia
     - `GCONF` to the location of your gspread OAuth2 credentials (recommend putting these in a location other than webserver root, i.e. **NOT** in `/var/www`). Remember to make these readable to your webserver user
-3. Share the workbook at SHEETS_URL with the email in your OAuth2 credentials, listed as `client_email`. **Note**: You may receive a "Message Undeliverable" notice in your email after sharing. Ignore it.
-
+    - `SELF_SERVICE` to `True` if you want users to be able to add themselves via txt message
+3. Share the workbook at ADMIN_BOOK with the email in your OAuth2 credentials, listed as `client_email`.  
+**Note**: You may receive a "Message Undeliverable" notice in your email after sharing. Ignore it.
+4. Add your first user
+    - Go to your `ADMIN_BOOK` and in the first column input your phone number (no spaces or dashes)
+    - In the adjacent column, enter the Google Sheets URL of the workbook you want to track _your_ expenses in
+    - **Make sure** the workbook is shared with the email defined in `SHARE_EMAIL`  
 ### Usage
 Messages sent to Expense-SMS follow this format:  
 `@<item>:<price>`  
@@ -60,9 +65,14 @@ Right now, you can customize the character identifier, currently set to the `@` 
 
 
 ### The Road Ahead
-The cell `D1` in each sheet acts as a running tally of that day's expenses. I plan to soon implement a feature that will create a sheet that displays total monthly expenses, broken down by category.
+- The _magic cell_ `D1` in each sheet acts as a running tally of that day's expenses. I plan to soon implement a feature that will create a sheet that displays total monthly expenses, broken down by category.
 
-To do that will require going through all sheets in a month (2015-11-*, for example), making a set containing all item names, and updating the cost associated with each name, with information from all sheets from that month.
+    To do that will require going through all sheets in a month (2015-11-*, for example), making a set containing all item names, and updating the cost associated with each name, with information from all sheets from that month.
 
-I also plan on implementing functionality to query the workbook.  
-Because Nexmo does not charge for incoming messages, and because I want to commit expenses more often than I want to look at them, this feature is not of immediate neccessity (in my use case).
+- Implementing functionality to query the workbook.  
+        Because Nexmo does not charge for incoming messages, and because I want to commit expenses more often than I want to look at them, this feature is not of immediate neccessity (in my use case).
+
+- Per-user settings  
+  Users should be able to configure their own _magic cells_ and any other settings that may be added in the future
+
+- Move all possible configuration options into `ADMIN_BOOK`
