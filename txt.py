@@ -33,18 +33,15 @@ type = type.translate(None, "'")
 
 print "<html>"
 print "<head>"
-print "<title>Test Callback</title>"
+print "<title>Debugging</title>"
 print "</head>"
 print "<body>"
-print "<h2>MSISDN: %s \r\nTo:%s \r\nmessageId: %s \r\nText: %s\r \nTimestamp: %s \r\nType %s</h2>" % (msisdn, to, messageId,text,message_timestamp,type)
+print "<h2>MSISDN: %s \nTo:%s \nmessageId: %s \nText: %s \nTimestamp: %s \nType %s</h2>" % (msisdn, to, messageId,text,message_timestamp,type)
 print "</body>"
 print "</html>"
 
 #Build an object with all message details
 content = {'msisdn' : msisdn, 'recipient' : to , 'id' : messageId , 'message' : text , 'timestamp'  : message_timestamp}
-
-message = 'MSISDN: ' + msisdn + '\nTo: ' + to + '\nmessageId: ' + messageId + '\nTEXT:' + text + '\n\nTimestamp: ' + message_timestamp
-
 
 
 interpreter(content)
