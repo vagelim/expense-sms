@@ -2,27 +2,57 @@
 # __author__ = 'vagelim'
 
 import gspread_utils as gs#Testing
-from config import DEFAULT_NUMBER
+from config import DEFAULT_NUMBER, SHARE_EMAIL
+from sms import sendTxt
+
 ############
 # KEYWORDS #
 ############
+ADMIN = '!' #Admin command prefix
 EXPENSE = '@' #For expense tracking
-
+NEW_USER = 'add' #New user keyword
 
 def interpreter(content=None):
     """Takes a message object, containing: msisdn, recipient, message, id, timestamp"""
-    if content == None:
+    if content == None or content['message'] == '':
         return 0
 
-    if EXPENSE in content['message'][0] :
+    print content['message'] #Debugging
+
+    #Add 1 to the front of the phone number (Nexmo requires it for sending SMS)
+    #Makes this app USA only for the moment :(
+    if content['msisdn'][0] != '1':
+        #Append it
+        l = []
+        l.append('1')
+        l.append(content['msisdn'])
+        content['msisdn'] = ''.join(l)
+
+    #Message contains administrative commands
+    if ADMIN is content['message'][0]:
+        pass
+
+    #If it is a request from a user to add themselves
+    if NEW_USER == content['message'].lower():
+        gs.addUser(content['msisdn'])
+
+    #Message contains expenses
+    elif EXPENSE is content['message'][0]:
         #Clean the timestamp
         content['timestamp'] = content['timestamp'].split()[0]
         #Clean and normalize the message
         content['message'] = content['message'][1:].lower()
 
-        sheet = gs.getSheet(content['timestamp'])
-        gs.commit(content, sheet)
+        #Get user workbook
+        book = gs.getUserBook(content['msisdn'])
 
+        if book != -1: #Book == -1 if user does not exist
+            sheet = gs.getSheet(content['timestamp'], book)
+            gs.commit(content, sheet)
+
+    elif 'http' == content['message'][:4]: #If the message is a URL, assume the user is trying to add themselves to the system
+        gs.addUser(content['msisdn'], content['message'])
+        sendTxt("Workbook added!\n Make sure you share it with " + SHARE_EMAIL, content['msisdn'])
 
 if __name__ == '__main__': #For testing, should never run as main()
     import sys
