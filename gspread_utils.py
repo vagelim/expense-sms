@@ -1,14 +1,12 @@
-#!/usr/bin/env python
 # __author__ = 'vagelim'
 import json
 import gspread
 from oauth2client.client import SignedJwtAssertionCredentials
 
-from config import SHEETS_URL, GCONF
+from config import GCONF, ADMIN_BOOK, SELF_SERVICE, SHARE_EMAIL
+from sms import sendTxt #Be able to send SMS
 
-
-def getWorkbook(url=SHEETS_URL):
-
+def getWorkbook(url):
     json_key = json.load(open(GCONF))
     scope = ['https://spreadsheets.google.com/feeds']
 
@@ -20,10 +18,9 @@ def getWorkbook(url=SHEETS_URL):
 
     return book
 
-def getSheet(sheet):
-    """Takes a sheet name and book, returns the sheet
-    If called without a book, gets the default"""
-    book=getWorkbook() 
+def getSheet(sheet, book):
+    """Takes a sheet name and book, returns the sheet"""
+
 
     list_sheets = book.worksheets()
     #Check to see if the sheet exists
@@ -41,7 +38,7 @@ def getSheet(sheet):
 
     return sheet
 
-def getValue(sheet, book=getWorkbook() ):
+def getValue(cell, sheet, book=None ):
     pass
 
 def commit(content, sheet):
@@ -83,6 +80,68 @@ def commit(content, sheet):
             depth  = len(sheet.col_values(1))
             depth += 1
             sheet.update_cell(depth, 1 , name) #Append name to the last row, first column
-            sheet.update_cell(depth, 2 , price)
+            sheet.update_cell(depth, 2 , price) #Append price to the last row, second column
 
+def getUserBook(phone_number):
+    """Takes a phone number, returns phone number's workbook"""
+    #Get Admin workbook
+    book = getWorkbook(ADMIN_BOOK)
+
+    #Get user sheet
+    sheet = getSheet("users", book)
+
+    #Check if phone_number is a valid user
+    col_values = sheet.col_values(1) #First column lists users, second column is workbook URL
+    if phone_number in col_values:
+        cell = sheet.find(phone_number)
+        #URL is adjacent column
+        URL = sheet.cell(cell.row, cell.col + 1).value
+
+        if URL[:4] == 'http': #If 'valid' URL
+            try:
+                book = getWorkbook(URL)
+
+            except gspread.exceptions.SpreadsheetNotFound: #Workbook is not shared
+                sendTxt('Workbook not found. Make sure you shared it with: ' + SHARE_EMAIL, phone_number)
+                return -1
+            except gspread.exceptions.NoValidUrlKeyFound: #Workbook URL is invalid
+                return -1
+                addUser(phone_number, URL='invalid')
+            
+            return book
+
+        elif URL == '': #Field is empty
+            pass
+
+    else: #If not an existing user
+        addUser(phone_number)
+        return -1
+
+def addUser(phone_number , URL=None):
+
+    if SELF_SERVICE == False: #Users must be manually added
+        return -1
+
+    if URL == None:
+        sendTxt("User not found. Please reply with a Google Sheets URL.", phone_number)
+
+    if URL == 'invalid': #URL was invalid, user needs to make a new one
+        sendTxt("Workbook is invalid. Please reply with a valid Google Sheets URL.", phone_number)
+    #Get Admin workbook
+    book = getWorkbook(ADMIN_BOOK)
+
+    #Get user sheet
+    sheet = getSheet("users", book)
+
+    #Check if phone number has tried to add itself already
+    col_values = sheet.col_values(1) #First column lists users, second column is workbook URL
+    if phone_number in col_values:
+        cell = sheet.find(phone_number)
+        #Update the URL of the user's book
+        sheet.update_cell(cell.row, cell.col + 1, URL)
+
+    else: #The user just got sent a message telling them to add the URL
+        #Add them to the db, so they will be recognized when they respond
+        depth = len(sheet.col_values(1)) + 1
+        sheet.update_cell(depth, 1, phone_number)
 
