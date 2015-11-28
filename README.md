@@ -80,4 +80,4 @@ Right now, you can customize the character identifier, currently set to the `@` 
 #Try it out yourself!
 You can try it out yourself today! Get started by txting `add` to **12242028246**.  
 Then, follow the prompts.  
-Make sure the Google Sheets URL you send is shared with: `account-398@gentle-corpuscle-113209.iam.gserviceaccount.com`
+Make sure the Google Sheets URL you send is shared with: `account-1@genial-aspect-113800.iam.gserviceaccount.com`
