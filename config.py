@@ -12,6 +12,7 @@ NEXMO_SECRET = ''
 SHARE_EMAIL = 'account-398@gentle-corpuscle-113209.iam.gserviceaccount.com' #client_email in gspread OAUth2 json file
 ADMIN_BOOK = 'https://docs.google.com/spreadsheets/d/administrative-workbook/edit #Book for administration
 GCONF = 'goo.json'
+#SHEETS_URL MUST end with /edit
 
 
 #Allow users to add themselves via txt message
